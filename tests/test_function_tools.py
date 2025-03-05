@@ -464,3 +464,26 @@ class FunctionToolsTest:
         # Summary
         self.print_summary()
 
+def main():
+    """Run the educational test framework"""
+    tester = FunctionToolsTest()
+    tester.run_all_tests()
+
+if __name__ == "__main__":
+    main()
+
+"""
+Usage:
+    python -m pytest tests/test_function_tools.py -v
+    python -m pytest tests/test_function_tools.py::test_initialization -v
+"""
+
+import pytest
+import os
+import sqlite3
+from pathlib import Path
+import sys
+
+# Add helper_modules to path
+sys.path.append(str(Path(__file__).parent.parent / "helper_modules"))
+
