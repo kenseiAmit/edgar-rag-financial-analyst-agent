@@ -487,3 +487,315 @@ import sys
 # Add helper_modules to path
 sys.path.append(str(Path(__file__).parent.parent / "helper_modules"))
 
+class TestFunctionTools:
+    """Test suite for function tools implementation"""
+    
+    def test_environment_setup(self):
+        """Test 1: Verify environment and required packages"""
+        print("\n" + "="*60)
+        print("TEST 1: Environment Setup")
+        print("="*60)
+        
+        # Check required environment variables
+        required_vars = ['OPENAI_API_KEY']
+        missing_vars = []
+        
+        for var in required_vars:
+            if not os.getenv(var):
+                missing_vars.append(var)
+        
+        if missing_vars:
+            print(f"❌ Missing environment variables: {missing_vars}")
+            print("💡 HINT: Create a .env file with your OpenAI API key")
+            print("   Example: OPENAI_API_KEY=your_key_here")
+            pytest.fail(f"Missing environment variables: {missing_vars}")
+        
+        # Check required packages
+        required_packages = [
+            'yfinance', 'sqlite3', 'pathlib', 'dotenv',
+            'llama_index.core', 'llama_index.llms.openai', 'llama_index.embeddings.openai'
+        ]
+        
+        missing_packages = []
+        for package in required_packages:
+            try:
+                if package == 'sqlite3':
+                    import sqlite3
+                elif package == 'pathlib':
+                    from pathlib import Path
+                elif package == 'dotenv':
+                    from dotenv import load_dotenv
+                elif package == 'yfinance':
+                    import yfinance as yf
+                elif 'llama_index' in package:
+                    exec(f"import {package}")
+            except ImportError:
+                missing_packages.append(package)
+        
+        if missing_packages:
+            print(f"❌ Missing packages: {missing_packages}")
+            print("💡 HINT: Install missing packages with:")
+            print("   pip install -r requirements.txt")
+            pytest.fail(f"Missing packages: {missing_packages}")
+        
+        print("✅ All environment requirements satisfied")
+    
+    def test_imports(self):
+        """Test 2: Check that function_tools module imports correctly"""
+        print("\n" + "="*60)
+        print("TEST 2: Module Imports")
+        print("="*60)
+        
+        try:
+            from function_tools import FunctionToolsManager
+            print("✅ FunctionToolsManager imported successfully")
+        except ImportError as e:
+            print(f"❌ Import error: {e}")
+            print("💡 HINT: Check that function_tools.py is in helper_modules/")
+            print("💡 HINT: Verify all imports in function_tools.py are correct")
+            pytest.fail(f"Import error: {e}")
+        
+        # Test LlamaIndex imports
+        try:
+            from llama_index.core.tools import FunctionTool
+            from llama_index.llms.openai import OpenAI
+            from llama_index.embeddings.openai import OpenAIEmbedding
+            print("✅ LlamaIndex components imported successfully")
+        except ImportError as e:
+            print(f"❌ LlamaIndex import error: {e}")
+            print("💡 HINT: Install llama-index with:")
+            print("   pip install llama-index llama-index-llms-openai llama-index-embeddings-openai")
+            pytest.fail(f"LlamaIndex import error: {e}")
+    
+    def test_initialization(self):
+        """Test 3: Test FunctionToolsManager initialization"""
+        print("\n" + "="*60)
+        print("TEST 3: Manager Initialization")
+        print("="*60)
+        
+        try:
+            from function_tools import FunctionToolsManager
+            
+            # Test initialization
+            manager = FunctionToolsManager(verbose=True)
+            
+            # Check attributes
+            assert hasattr(manager, 'verbose'), "Manager missing 'verbose' attribute"
+            assert hasattr(manager, 'project_root'), "Manager missing 'project_root' attribute"
+            assert hasattr(manager, 'db_path'), "Manager missing 'db_path' attribute"
+            assert hasattr(manager, 'db_schema'), "Manager missing 'db_schema' attribute"
+            assert hasattr(manager, 'function_tools'), "Manager missing 'function_tools' attribute"
+            assert hasattr(manager, 'llm'), "Manager missing 'llm' attribute"
+            
+            print("✅ FunctionToolsManager initialized with all required attributes")
+            
+        except Exception as e:
+            print(f"❌ Initialization error: {e}")
+            print("💡 HINT: Check your __init__ method implementation")
+            print("💡 HINT: Verify _configure_settings() method is working")
+            pytest.fail(f"Initialization error: {e}")
+    
+    def test_schema_retrieval(self):
+        """Test 4: Test database schema retrieval"""
+        print("\n" + "="*60)
+        print("TEST 4: Database Schema Retrieval")
+        print("="*60)
+        
+        try:
+            from function_tools import FunctionToolsManager
+            manager = FunctionToolsManager(verbose=False)
+            
+            # Check schema content
+            schema = manager.db_schema
+            assert isinstance(schema, str), "Schema should be a string"
+            assert len(schema) > 0, "Schema should not be empty"
+            
+            # Check for key table names
+            expected_tables = ['customers', 'portfolio_holdings', 'companies', 'market_data']
+            for table in expected_tables:
+                if table not in schema.lower():
+                    print(f"⚠️  Warning: Table '{table}' not found in schema")
+            
+            print("✅ Database schema retrieved successfully")
+            print(f"📋 Schema length: {len(schema)} characters")
+            
+        except Exception as e:
+            print(f"❌ Schema retrieval error: {e}")
+            print("💡 HINT: Check your _get_database_schema() method")
+            print("💡 HINT: Ensure database file exists at correct path")
+            print("💡 HINT: Verify database connection logic")
+            pytest.fail(f"Schema retrieval error: {e}")
+    
+    def test_tool_creation(self):
+        """Test 5: Test FunctionTool creation"""
+        print("\n" + "="*60)
+        print("TEST 5: Function Tool Creation")
+        print("="*60)
+        
+        try:
+            from function_tools import FunctionToolsManager
+            manager = FunctionToolsManager(verbose=False)
+            
+            # Create tools
+            tools = manager.create_function_tools()
+            
+            # Check tools were created
+            assert isinstance(tools, list), "create_function_tools should return a list"
+            
+            if len(tools) == 0:
+                print("⚠️  No tools created yet - this is expected if not implemented")
+                print("💡 HINT: Implement create_function_tools() method")
+                print("💡 HINT: Create FunctionTool objects for:")
+                print("   - database_query_tool")
+                print("   - finance_market_search_tool") 
+                print("   - pii_protection_tool")
+                return
+            
+            # Check tool properties
+            from llama_index.core.tools import FunctionTool
+            for i, tool in enumerate(tools):
+                assert isinstance(tool, FunctionTool), f"Tool {i} should be a FunctionTool instance"
+                assert hasattr(tool, 'metadata'), f"Tool {i} missing metadata"
+                assert hasattr(tool.metadata, 'name'), f"Tool {i} missing name"
+            
+            print(f"✅ Created {len(tools)} function tools successfully")
+            for tool in tools:
+                print(f"   📋 Tool: {tool.metadata.name}")
+            
+        except Exception as e:
+            print(f"❌ Tool creation error: {e}")
+            print("💡 HINT: Implement create_function_tools() method")
+            print("💡 HINT: Use FunctionTool.from_defaults() to create tools")
+            print("💡 HINT: Make sure method signatures match function definitions")
+            pytest.fail(f"Tool creation error: {e}")
+    
+    def test_database_functionality(self):
+        """Test 6: Test database query functionality"""
+        print("\n" + "="*60)
+        print("TEST 6: Database Query Functionality")
+        print("="*60)
+        
+        try:
+            from function_tools import FunctionToolsManager
+            manager = FunctionToolsManager(verbose=False)
+            
+            # Test database query method
+            test_query = "How many customers do we have?"
+            result = manager.database_query_tool(test_query)
+            
+            assert isinstance(result, str), "Database query should return a string"
+            
+            if "not implemented" in result.lower():
+                print("⚠️  Database query tool not implemented yet")
+                print("💡 HINT: Complete the database_query_tool() method")
+                print("💡 HINT: Use LLM to generate SQL from natural language")
+                print("💡 HINT: Execute SQL against SQLite database")
+                print("💡 HINT: Format results as string with column information")
+                return
+            
+            print(f"✅ Database query executed successfully")
+            print(f"📋 Query: {test_query}")
+            print(f"📋 Result preview: {result[:100]}...")
+            
+        except Exception as e:
+            print(f"❌ Database query error: {e}")
+            print("💡 HINT: Check database_query_tool() implementation")
+            print("💡 HINT: Verify database connection and SQL execution")
+            print("💡 HINT: Handle errors gracefully")
+            pytest.fail(f"Database query error: {e}")
+    
+    def test_market_data_functionality(self):
+        """Test 7: Test market data functionality"""
+        print("\n" + "="*60)
+        print("TEST 7: Market Data Functionality")
+        print("="*60)
+        
+        try:
+            from function_tools import FunctionToolsManager
+            manager = FunctionToolsManager(verbose=False)
+            
+            # Test market data method
+            test_query = "Get AAPL stock price"
+            result = manager.finance_market_search_tool(test_query)
+            
+            assert isinstance(result, str), "Market search should return a string"
+            
+            if "not implemented" in result.lower():
+                print("⚠️  Market search tool not implemented yet")
+                print("💡 HINT: Complete the finance_market_search_tool() method")
+                print("💡 HINT: Use yfinance to get real-time market data")
+                print("💡 HINT: Parse query to extract stock symbols")
+                print("💡 HINT: Format results with price and volume information")
+                return
+            
+            print(f"✅ Market data retrieved successfully")
+            print(f"📋 Query: {test_query}")
+            print(f"📋 Result preview: {result[:100]}...")
+            
+        except Exception as e:
+            print(f"❌ Market data error: {e}")
+            print("💡 HINT: Check finance_market_search_tool() implementation")
+            print("💡 HINT: Verify yfinance is installed and working")
+            print("💡 HINT: Handle API errors gracefully")
+            pytest.fail(f"Market data error: {e}")
+    
+    def test_pii_protection(self):
+        """Test 8: Test PII protection functionality"""
+        print("\n" + "="*60)
+        print("TEST 8: PII Protection Functionality")
+        print("="*60)
+        
+        try:
+            from function_tools import FunctionToolsManager
+            manager = FunctionToolsManager(verbose=False)
+            
+            # Test PII protection method
+            test_data = "Customer: John Doe, Email: john.doe@example.com, Phone: 555-1234"
+            result = manager.pii_protection_tool(test_data)
+            
+            assert isinstance(result, str), "PII protection should return a string"
+            
+            if "PII protection applied" in result and test_data in result:
+                print("⚠️  PII protection tool not fully implemented yet")
+                print("💡 HINT: Complete the pii_protection_tool() method")
+                print("💡 HINT: Identify PII patterns (email, phone, names)")
+                print("💡 HINT: Apply appropriate masking (e.g., jo***@example.com)")
+                print("💡 HINT: Use column information to identify PII fields")
+                return
+            
+            print(f"✅ PII protection applied successfully")
+            print(f"📋 Original: {test_data}")
+            print(f"📋 Protected: {result}")
+            
+        except Exception as e:
+            print(f"❌ PII protection error: {e}")
+            print("💡 HINT: Check pii_protection_tool() implementation")
+            print("💡 HINT: Implement pattern matching for PII fields")
+            print("💡 HINT: Apply consistent masking strategies")
+            pytest.fail(f"PII protection error: {e}")
+
+if __name__ == "__main__":
+    # Run tests individually for better feedback
+    test_suite = TestFunctionTools()
+    
+    tests = [
+        ("Environment Setup", test_suite.test_environment_setup),
+        ("Module Imports", test_suite.test_imports),
+        ("Manager Initialization", test_suite.test_initialization),
+        ("Schema Retrieval", test_suite.test_schema_retrieval),
+        ("Tool Creation", test_suite.test_tool_creation),
+        ("Database Functionality", test_suite.test_database_functionality),
+        ("Market Data Functionality", test_suite.test_market_data_functionality),
+        ("PII Protection", test_suite.test_pii_protection)
+    ]
+    
+    print("Function Tools Test Suite")
+    print("=" * 60)
+    
+    for test_name, test_func in tests:
+        try:
+            test_func()
+            print(f"✅ {test_name}: PASSED")
+        except Exception as e:
+            print(f"❌ {test_name}: FAILED - {e}")
+        print()
