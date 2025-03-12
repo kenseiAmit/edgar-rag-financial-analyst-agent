@@ -1,11 +1,13 @@
 <div align="center">
-  <img src="assets/hero-banner.svg" alt="FinTool SEC 10-K & SQL Analyst" width="100%" />
+  <img src="assets/hero-banner.svg" alt="FinTool SEC 10-K &amp; SQL Analyst" width="100%" />
   <br/><br/>
-  ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)
-  ![LlamaIndex](https://img.shields.io/badge/RAG-LlamaIndex%20VectorStoreIndex-7C3AED?style=flat-square)
-  ![Tests](https://img.shields.io/badge/Verification-79%2F79%20Checks%20Passing-16A34A?style=flat-square)
-  ![PII Guard](https://img.shields.io/badge/SQL%20Security-Read--Only%20%2B%20Auto%20PII%20Masking-0D9488?style=flat-square)
-  ![License](https://img.shields.io/badge/License-MIT-slate?style=flat-square)
+  <p>
+    <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python" />
+    <img src="https://img.shields.io/badge/RAG-LlamaIndex%20VectorStoreIndex-7C3AED?style=flat-square" alt="LlamaIndex" />
+    <img src="https://img.shields.io/badge/Verification-79%2F79%20Checks%20Passing-16A34A?style=flat-square" alt="Tests" />
+    <img src="https://img.shields.io/badge/SQL%20Security-Read--Only%20%2B%20Auto%20PII%20Masking-0D9488?style=flat-square" alt="PII Guard" />
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-475569?style=flat-square" alt="License" /></a>
+  </p>
 </div>
 
 ---
