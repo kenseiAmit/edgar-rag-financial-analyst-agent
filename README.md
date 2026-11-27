@@ -12,6 +12,8 @@
 
 ---
 
+![FinTool SEC EDGAR 10-K RAG & NL-to-SQL Analyst Blueprint](docs/images/architecture_blueprint.png)
+
 Autonomous equity and portfolio research coordinator built with **LlamaIndex** and **OpenAI**—unifying **FY2024 SEC Form 10-K vector retrieval** (`AAPL`, `GOOGL`, `TSLA`), **schema-grounded read-only SQLite NL-to-SQL generation** (`MAX_ROWS = 25`), **live Yahoo Finance market telemetry**, and **pre-LLM PII redaction**.
 
 ![FinTool Verification & Guardrails](docs/images/fintool_verification_and_guardrails.png)
